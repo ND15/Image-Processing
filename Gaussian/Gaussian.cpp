@@ -19,7 +19,7 @@ float calcGaussMatrix(int i, int j, float sigma)
 }
 
 
-float sum_2d(float A[][7], int n)
+float sum_2d(float *A[], int n)
 {
 	float sum = 0.0;
 	for (int i = 0; i < n; i++)
@@ -35,7 +35,7 @@ float sum_2d(float A[][7], int n)
 
 float sum(float B[], int n)
 {
-	float sum = 0;
+	float sum = 0.0;
 	for (int i = 0; i < n; i++)
 	{
 		sum = sum + B[i];
@@ -43,7 +43,7 @@ float sum(float B[], int n)
 	return sum;
 }
 
-float GaussianFilter(float *A[], float B[], float C[][9], int n, int i, int j) //x -> neighbor matrix //i -> row, j->column
+float GaussianFilter(float *A[], float B[], float *C[], int n, int i, int j) //x -> neighbor matrix //i -> row, j->column
 {
 	int index = 0;
 	int k = 0;
@@ -89,19 +89,18 @@ int main()
 	int n = 9;
 	float sigma = 7;
 	float GaussianValue = 0;
+
 	float *B = new float[n * n];
 	float *C = new float[x * y];
 	float *D = new float[x * y];
 
-	float Gauss[9][9];/*= { {0,0,1,2,1,0,0},
-							{0,3,13,22,13,3,0},
-							{1,13,59,97,59,13,1},
-							{2,22,97,159,97,22,2},
-							{1,13,59,97,59,13,1},
-							{0,3,13,22,13,3,0},
-							{0,0,1,2,1,0,0} };
+	float **Gauss = new float*[n];
 
-	int sum = sum_2d(Gauss, 7);*/
+	for (int i = 0; i < n; i++)
+	{
+		Gauss[i] = new float[n];
+	}
+
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < n; j++)
@@ -142,6 +141,7 @@ int main()
 		}
 	}
 
+	//Display the updated pixels
 	for (int i = 0; i < x*y; i++)
 	{
 		cout << D[i] << " ";
@@ -152,7 +152,28 @@ int main()
 
 	imwrite("Test_09.png", E);
 	imshow("image", img);
+
+	Mat img_02 = imread("Test_09.png");
+	imshow("Result", img_02);
 	waitKey();
+
+	//deallocation
+	for (int i = 0; i < n; i++)
+	{
+		delete[] Gauss[i];
+	}
+	delete[] Gauss;
+	
+	for (int i = 0; i < x; i++)
+	{
+		delete[] A[i];
+	}
+	delete[] A;
+
+	delete[] B;
+	delete[] C;
+	delete[] D;
+
 
 	return 0;
 }
